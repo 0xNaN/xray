@@ -132,29 +132,7 @@ function ChromeSource(rawHtml) {
     tr = this.doc.createElement("tr");
     appendLineNumber(tr, i+1);
 
-    /* identify the tags XXX: or items? (STANDARD_TAG, COMMENT, DOCTYPE) in each line
-     * and process it
-     */
-    currentItem = "";
-    items = [];
-    for(c = 0; c < line.length; c++) {
-      ch = line[c];
-
-      // XXX: what if '<' or '>' is between quotes?
-      if(currentItem.slice(-1) == ">") {
-          /*
-           * Now here we have a an item done,
-           *  e.g: currentItem = '<html>'
-           */
-          items.push(currentItem);
-          currentItem = "";
-      }
-
-      currentItem += ch;
-    }
-
-    if(currentItem != "")
-        items.push(currentItem);
+    items = extractItems(line);
 
     /*
      * Here items is a list containing all
@@ -209,6 +187,36 @@ function ChromeSource(rawHtml) {
   }
 
   return this.doc.documentElement.outerHTML;
+
+  /*
+   * returns a list containing all items (TAGS, COMMENT, PLAIN_TEXT, DOCTYPE, ...)
+   * in the given string of HTML
+   * TODO: simplify maybe with some split
+   */
+  function extractItems(htmlLine) {
+    currentItem = "";
+    items = [];
+
+    for(c = 0; c < htmlLine.length; c++) {
+      ch = htmlLine[c];
+
+      // XXX: what if '<' or '>' is between quotes?
+      if(currentItem.slice(-1) == ">") {
+          /*
+           * Now here we have a an item done,
+           *  e.g: currentItem = '<html>'
+           */
+          items.push(currentItem);
+          currentItem = "";
+      }
+
+      currentItem += ch;
+    }
+
+    if(currentItem != "")
+        items.push(currentItem);
+    return items;
+  }
 
   function appendLineNumber(tbody, number) {
     tr.appendChild((td = this.doc.createElement("td")),
