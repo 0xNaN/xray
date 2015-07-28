@@ -152,22 +152,23 @@ function ChromeSource(rawHtml) {
             *  - a stardad tag will always starts with <[a-Z]+
             *  - all the others format is plain text
             */
-            if(/^<[a-zA-Z]+/.test(item) || lastType == "STANDARD_TAG") {
+
+            if(isStandardTag(item) || lastType == "STANDARD_TAG") {
                 lastType = "STANDARD_TAG";
 
                 span = createSpan("html-tag", item);
                 td.appendChild(span);
 
-                if(/>$/.test(item))
+                if(endsAStandardTag(item))
                     lastType = null;
 
-            } else if(/^<!--/.test(item) || lastType == "COMMENT" ) {
+            } else if(isComment(item) || lastType == "COMMENT" ) {
                 lastType = "COMMENT";
 
                 span = createSpan("html-comment", item);
                 td.appendChild(span);
 
-                if(/--!>$/.test(item))
+                if(endsAComment(item))
                     lastType = null;
             }
         });
@@ -178,6 +179,26 @@ function ChromeSource(rawHtml) {
   }
 
   return this.doc.documentElement.outerHTML;
+
+  function isStandardTag(item) {
+    var RE_STANDARD_TAG_BEGIN = /^<[a-zA-Z]+/;
+    return RE_STANDARD_TAG_BEGIN.test(item);
+  }
+
+  function isComment(item) {
+    var RE_COMMENT_BEGIN = /^<!--/;
+    return RE_COMMENT_BEGIN.test(item);
+  }
+
+  function endsAStandardTag(item) {
+    var RE_STANDARD_TAG_END = />$/;
+    return RE_STANDARD_TAG_END.test(item);
+  }
+
+  function endsAComment(item) {
+    var RE_COMMENT_END = /--!>$/;
+    return RE_COMMENT_END.test(items);
+  }
 
   /*
    * returns a list containing all items (TAGS, COMMENT, PLAIN_TEXT, DOCTYPE, ...)
