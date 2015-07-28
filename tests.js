@@ -25,3 +25,37 @@ QUnit.test( "ChromeSource process two tag on separate lines", function( assert )
                        "<tr><td class=\"line-number\" value=\"2\"></td><td class=\"line-content\"><span class=\"html-tag\">&lt;head&gt;</span></td></tr>"+
                        "</tbody></table></body></html>");
 });
+
+QUnit.test( "ChromeSource process a two tags on a line", function( assert ) {
+  line = "<html><head>";
+  source = ChromeSource(line);
+  assert.equal( source, "<html><head></head><body>" +
+                       "<div class=\"line-gutter-backdrop\"></div><table><tbody>" +
+                       "<tr><td class=\"line-number\" value=\"1\"></td><td class=\"line-content\">"+
+                          "<span class=\"html-tag\">&lt;html&gt;</span>"+
+                          "<span class=\"html-tag\">&lt;head&gt;</span></td></tr>"+
+                       "</tbody></table></body></html>");
+});
+
+QUnit.test( "ChromeSource process a comment on a line", function( assert ) {
+  line = "<!-- a comment -->";
+  source = ChromeSource(line);
+  assert.equal( source, "<html><head></head><body>" +
+                       "<div class=\"line-gutter-backdrop\"></div><table><tbody>" +
+                       "<tr><td class=\"line-number\" value=\"1\"></td><td class=\"line-content\">"+
+                          "<span class=\"html-comment\">&lt;!-- a comment --&gt;</span></td></tr>"+
+                       "</tbody></table></body></html>");
+});
+
+QUnit.test( "ChromeSource process a comment on multiple lines", function( assert ) {
+  line = "<!-- a comment on\n" +
+         "multiple lines -->";
+  source = ChromeSource(line);
+  assert.equal( source, "<html><head></head><body>" +
+                       "<div class=\"line-gutter-backdrop\"></div><table><tbody>" +
+                       "<tr><td class=\"line-number\" value=\"1\"></td><td class=\"line-content\">"+
+                          "<span class=\"html-comment\">&lt;!-- a comment on</span></td></tr>"+
+                       "<tr><td class=\"line-number\" value=\"2\"></td><td class=\"line-content\">"+
+                          "<span class=\"html-comment\">multiple lines --&gt;</span></td></tr>"+
+                       "</tbody></table></body></html>");
+});

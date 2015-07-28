@@ -124,6 +124,7 @@ function ChromeSource(rawHtml) {
   tbody = initTable(this.doc);
 
   lines = rawHtml.split("\n");
+  lastType = null;
 
   for(i = 0; i < lines.length; i++) {
     line = lines[i];
@@ -173,13 +174,32 @@ function ChromeSource(rawHtml) {
             *  - a stardad tag will always starts with <[a-Z]+
             *  - all the others format is plain text
             */
-            if(/^<[a-zA-Z]+/.test(item)) {
-                console.log("[STANDARD_TAG] ", item);
+            if(/^<[a-zA-Z]+/.test(item) || lastType == "STANDARD_TAG") {
+                console.log("[STANDARD_TAG] ", currentItem);
+                lastType = "STANDARD_TAG";
+
+                console.log("[STANDARD_TAG] ", currentItem);
                 span = this.doc.createElement("span");
                 span.className = "html-tag";
 
                 span.innerHTML = htmlEscape(item);
                 td.appendChild(span);
+
+                if(/>$/.test(item))
+                    lastType = null;
+
+            } else if(/^<!--/.test(item) || lastType == "COMMENT" ) {
+                console.log("[COMMENT] ", item);
+                lastType = "COMMENT";
+
+                span = this.doc.createElement("span");
+                span.className = "html-comment";
+
+                span.innerHTML = htmlEscape(item);
+                td.appendChild(span);
+
+                if(/--!>$/.test(item))
+                    lastType = null;
             }
         });
 
