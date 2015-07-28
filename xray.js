@@ -156,11 +156,7 @@ function ChromeSource(rawHtml) {
                 console.log("[STANDARD_TAG] ", currentItem);
                 lastType = "STANDARD_TAG";
 
-                console.log("[STANDARD_TAG] ", currentItem);
-                span = this.doc.createElement("span");
-                span.className = "html-tag";
-
-                span.innerHTML = htmlEscape(item);
+                span = createSpan("html-tag", item);
                 td.appendChild(span);
 
                 if(/>$/.test(item))
@@ -170,10 +166,7 @@ function ChromeSource(rawHtml) {
                 console.log("[COMMENT] ", item);
                 lastType = "COMMENT";
 
-                span = this.doc.createElement("span");
-                span.className = "html-comment";
-
-                span.innerHTML = htmlEscape(item);
+                span = createSpan("html-comment", item);
                 td.appendChild(span);
 
                 if(/--!>$/.test(item))
@@ -216,6 +209,16 @@ function ChromeSource(rawHtml) {
     if(currentItem != "")
         items.push(currentItem);
     return items;
+  }
+
+  /*
+   * Returns a new span with the given className and content
+   */
+  function createSpan(className, content) {
+    var span = this.doc.createElement("span");
+    span.className = className;
+    span.innerHTML = htmlEscape(content);
+    return span;
   }
 
   function appendLineNumber(tbody, number) {
