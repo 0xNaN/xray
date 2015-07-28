@@ -1,12 +1,15 @@
 <!DOCTYPE html>
-<html>
-  <head>
+<html><head>
     <title> Xray </title>
+
+   <!-- TODO:
+        extract css file and inject them via javascript -->
     <link rel="stylesheet" type="text/css" href="xray.css"/>
+    <link rel="stylesheet" href="view-source.css" />
     <script type="text/javascript" src="xray.js"></script>
   </head>
 
-  <body onLoad="doXray('source', 'glass')">
+  <body onLoad='doXray("source", "glass")'>
 
     <div id="source" >
       Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac<br>

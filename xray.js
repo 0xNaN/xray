@@ -1,6 +1,9 @@
 function doXray(sourceId, glassId) {
     sourceView = new SourceView(sourceId);
 
+    // sourceView.setContent(ChromeSource(document.documentElement.outerHTML));
+    sourceView.setContent(ChromeSource("<html>\n   <!-- a comment\non multiple line --><head><title> TITOLO  </title> <body>\n   <a href='ciao'> un link </a>"));
+
     glass = new Glass(glassId);
     glass.setSourceView(sourceView);
 }
@@ -65,6 +68,11 @@ function SourceView(sourceId) {
       that.element.scrollTop = glassRect.top - that.boundingRect.top;
     }
   }
+
+  this.setContent = function (content) {
+    that.element.innerHTML = content;
+    that.boundingRect = this.element.getBoundingClientRect();
+  }
 }
 
 
@@ -103,3 +111,115 @@ function Glass(glassId) {
     that.sourceView.update(that.element.getBoundingClientRect());
   }
 }
+
+// aggiustare lo scope di doc nelle funzioni
+function ChromeSource(rawHtml) {
+
+  /*
+   * Using an HTML document to take advantage of its functions
+   * and then take its source
+   */
+  this.doc = document.implementation.createHTMLDocument();
+
+  tbody = initTable(this.doc);
+
+  lines = rawHtml.split("\n");
+
+  for(i = 0; i < lines.length; i++) {
+    line = lines[i];
+
+    tr = this.doc.createElement("tr");
+    appendLineNumber(tr, i+1);
+
+    /* identify the tags XXX: or items? (STANDARD_TAG, COMMENT, DOCTYPE) in each line
+     * and process it
+     */
+    currentItem = "";
+    items = [];
+    for(c = 0; c < line.length; c++) {
+      ch = line[c];
+
+      // XXX: what if '<' or '>' is between quotes?
+      if(currentItem.slice(-1) == ">") {
+          /*
+           * Now here we have a an item done,
+           *  e.g: currentItem = '<html>'
+           */
+          items.push(currentItem);
+          currentItem = "";
+      }
+
+      currentItem += ch;
+    }
+
+    if(currentItem != "")
+        items.push(currentItem);
+
+    /*
+     * Here items is a list containing all
+     * the items on the line, so we need to understand the type
+     * e.g COMMENT, DOCTYPE, TEXT and add its content
+     */
+    if(items.length > 0) {
+        td = this.doc.createElement("td");
+        td.className = "line-content";
+
+        items.forEach(function(item) {
+            /*
+            * To understand what's the type of the item
+            * we could use this strategy:
+            *  - a comment will always starts with <!--
+            *  - a doctype will always starts with <!
+            *  - a stardad tag will always starts with <[a-Z]+
+            *  - all the others format is plain text
+            */
+            if(/^<[a-zA-Z]+/.test(item)) {
+                console.log("[STANDARD_TAG] ", item);
+                span = this.doc.createElement("span");
+                span.className = "html-tag";
+
+                span.innerHTML = htmlEscape(item);
+                td.appendChild(span);
+            }
+        });
+
+        tr.appendChild(td);
+    }
+    tbody.appendChild(tr);
+  }
+
+  return this.doc.documentElement.outerHTML;
+
+  function appendLineNumber(tbody, number) {
+    tr.appendChild((td = this.doc.createElement("td")),
+                          td.className = "line-number",
+                          td.setAttribute("value", number.toString()),
+                          td);
+  }
+
+  function initTable(doc) {
+    /* header */
+    bd = doc.getElementsByTagName("body")[0];
+
+    line_gutter_backdrop = doc.createElement("div");
+    line_gutter_backdrop.className = "line-gutter-backdrop";
+    bd.appendChild(line_gutter_backdrop);
+
+    bd.appendChild(doc.createElement("table"));
+    tbody = doc.createElement("tbody");
+    // this is "table"
+    bd.lastChild.appendChild(tbody);
+
+    return tbody;
+  }
+
+  function htmlEscape(str) {
+    return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+    }
+}
+
