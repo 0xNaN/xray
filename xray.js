@@ -153,7 +153,6 @@ function ChromeSource(rawHtml) {
             *  - all the others format is plain text
             */
             if(/^<[a-zA-Z]+/.test(item) || lastType == "STANDARD_TAG") {
-                console.log("[STANDARD_TAG] ", currentItem);
                 lastType = "STANDARD_TAG";
 
                 span = createSpan("html-tag", item);
@@ -163,7 +162,6 @@ function ChromeSource(rawHtml) {
                     lastType = null;
 
             } else if(/^<!--/.test(item) || lastType == "COMMENT" ) {
-                console.log("[COMMENT] ", item);
                 lastType = "COMMENT";
 
                 span = createSpan("html-comment", item);
@@ -187,8 +185,8 @@ function ChromeSource(rawHtml) {
    * TODO: simplify maybe with some split
    */
   function extractItems(htmlLine) {
-    currentItem = "";
-    items = [];
+    var currentItem = "";
+    var items = [];
 
     for(c = 0; c < htmlLine.length; c++) {
       ch = htmlLine[c];
@@ -208,6 +206,7 @@ function ChromeSource(rawHtml) {
 
     if(currentItem != "")
         items.push(currentItem);
+
     return items;
   }
 
