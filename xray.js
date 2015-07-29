@@ -198,7 +198,7 @@ function ChromeSource(rawHtml) {
 
   function endsAComment(item) {
     var RE_COMMENT_END = /--!>$/;
-    return RE_COMMENT_END.test(items);
+    return RE_COMMENT_END.test(item);
   }
 
   /*
