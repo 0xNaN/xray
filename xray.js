@@ -163,14 +163,14 @@ function ChromeSource(rawHtml) {
    */
   function applyChromeSourceDecoration(lastType, item) {
       var span;
-      if(beginLikeStandardTag(item) || lastType == "STANDARD_TAG") {
+      if((lastType == null && beginLikeStandardTag(item)) || lastType == "STANDARD_TAG") {
           span = createSpan("html-tag", item);
 
           if(endsLikeStandardTag(item))
               globalLastType = null;
           else
               globalLastType = "STANDARD_TAG";
-      } else if(beginLikeComment(item) || lastType == "COMMENT" ) {
+      } else if((lastType == null && beginLikeComment(item)) || lastType == "COMMENT" ) {
           span = createSpan("html-comment", item);
 
           if(endsLikeComment(item))
