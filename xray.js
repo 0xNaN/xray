@@ -163,17 +163,17 @@ function ChromeSource(rawHtml) {
    */
   function applyChromeSourceDecoration(lastType, item) {
       var span;
-      if(isStandardTag(item) || lastType == "STANDARD_TAG") {
+      if(beginLikeStandardTag(item) || lastType == "STANDARD_TAG") {
           span = createSpan("html-tag", item);
 
-          if(endsAStandardTag(item))
+          if(endsLikeStandardTag(item))
               globalLastType = null;
           else
               globalLastType = "STANDARD_TAG";
-      } else if(isComment(item) || lastType == "COMMENT" ) {
+      } else if(beginLikeComment(item) || lastType == "COMMENT" ) {
           span = createSpan("html-comment", item);
 
-          if(endsAComment(item))
+          if(endsLikeComment(item))
               globalLastType = null;
             else
               globalLastType = "COMMENT"
@@ -181,22 +181,22 @@ function ChromeSource(rawHtml) {
       return span;
   }
 
-  function isStandardTag(item) {
+  function beginLikeStandardTag(item) {
     var RE_STANDARD_TAG_BEGIN = /^<[a-zA-Z]+/;
     return RE_STANDARD_TAG_BEGIN.test(item);
   }
 
-  function isComment(item) {
+  function beginLikeComment(item) {
     var RE_COMMENT_BEGIN = /^<!--/;
     return RE_COMMENT_BEGIN.test(item);
   }
 
-  function endsAStandardTag(item) {
+  function endsLikeStandardTag(item) {
     var RE_STANDARD_TAG_END = />$/;
     return RE_STANDARD_TAG_END.test(item);
   }
 
-  function endsAComment(item) {
+  function endsLikeComment(item) {
     var RE_COMMENT_END = /--!>$/;
     return RE_COMMENT_END.test(item);
   }
@@ -213,8 +213,8 @@ function ChromeSource(rawHtml) {
     for(c = 0; c < htmlLine.length; c++) {
       ch = htmlLine[c];
 
-      if(isComment(currentItem)) {
-        if(endsAComment(currentItem)) {
+      if(beginLikeComment(currentItem)) {
+        if(endsLikeComment(currentItem)) {
             items.push(currentItem);
             currentItem = "";
         }
