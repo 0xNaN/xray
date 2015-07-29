@@ -121,7 +121,7 @@ function ChromeSource(rawHtml) {
    */
   this.doc = document.implementation.createHTMLDocument();
 
-  tbody = initTable(this.doc);
+  tbody = appendChromeSourceViewTable(this.doc);
 
   lines = rawHtml.split("\n");
 
@@ -255,7 +255,7 @@ function ChromeSource(rawHtml) {
                           td);
   }
 
-  function initTable(doc) {
+  function appendChromeSourceViewTable(doc) {
     /* header */
     bd = doc.getElementsByTagName("body")[0];
 
