@@ -59,3 +59,26 @@ QUnit.test( "ChromeSource process a comment on multiple lines", function( assert
                           "<span class=\"html-comment\">multiple lines --&gt;</span></td></tr>"+
                        "</tbody></table></body></html>");
 });
+
+QUnit.test( "ChromeSource process a comment containing a tag", function( assert ) {
+  line = "<!-- <head> -->";
+  source = ChromeSource(line);
+  assert.equal( source, "<html><head></head><body>" +
+                       "<div class=\"line-gutter-backdrop\"></div><table><tbody>" +
+                       "<tr><td class=\"line-number\" value=\"1\"></td><td class=\"line-content\">"+
+                          "<span class=\"html-comment\">&lt;!-- &lt;head&gt; --&gt;</span></td></tr>"+
+                       "</tbody></table></body></html>");
+});
+
+QUnit.test( "ChromeSource process a comment containing a tag on mutilple lines", function( assert ) {
+  line = "<!--\n"+
+         "<head> -->";
+  source = ChromeSource(line);
+  assert.equal( source, "<html><head></head><body>" +
+                       "<div class=\"line-gutter-backdrop\"></div><table><tbody>" +
+                       "<tr><td class=\"line-number\" value=\"1\"></td><td class=\"line-content\">"+
+                          "<span class=\"html-comment\">&lt;!--</span></td></tr>"+
+                       "<tr><td class=\"line-number\" value=\"2\"></td><td class=\"line-content\">"+
+                          "<span class=\"html-comment\">&lt;head&gt; --&gt;</span></td></tr>"+
+                       "</tbody></table></body></html>");
+});
