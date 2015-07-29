@@ -119,9 +119,9 @@ function ChromeSource(rawHtml) {
    * Using an HTML document to take advantage of its functions
    * and then take its source
    */
-  this.doc = document.implementation.createHTMLDocument();
+  var doc = document.implementation.createHTMLDocument();
 
-  tbody = appendChromeSourceViewTable(this.doc);
+  tbody = appendChromeSourceViewTable(doc);
 
   lines = rawHtml.split("\n");
 
@@ -131,7 +131,7 @@ function ChromeSource(rawHtml) {
   for(i = 0; i < lines.length; i++) {
     line = lines[i];
 
-    tr = this.doc.createElement("tr");
+    tr = doc.createElement("tr");
     appendLineNumber(tr, i+1);
 
     items = extractItems(globalLastType, line);
@@ -142,7 +142,7 @@ function ChromeSource(rawHtml) {
      * e.g COMMENT, DOCTYPE, TEXT and add its content
      */
     if(items.length > 0) {
-        td = this.doc.createElement("td");
+        td = doc.createElement("td");
         td.className = "line-content";
 
         items.forEach(function(item) {
@@ -155,7 +155,7 @@ function ChromeSource(rawHtml) {
     tbody.appendChild(tr);
   }
 
-  return this.doc.documentElement.outerHTML;
+  return doc.documentElement.outerHTML;
 
   /*
    * returns a span that display the specified item following
@@ -242,14 +242,14 @@ function ChromeSource(rawHtml) {
    * Returns a new span with the given className and content
    */
   function createSpan(className, content) {
-    var span = this.doc.createElement("span");
+    var span = document.createElement("span");
     span.className = className;
     span.innerHTML = htmlEscape(content);
     return span;
   }
 
   function appendLineNumber(tbody, number) {
-    tr.appendChild((td = this.doc.createElement("td")),
+    tr.appendChild((td = document.createElement("td")),
                           td.className = "line-number",
                           td.setAttribute("value", number.toString()),
                           td);
