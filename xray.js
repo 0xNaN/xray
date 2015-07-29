@@ -213,8 +213,14 @@ function ChromeSource(rawHtml) {
     for(c = 0; c < htmlLine.length; c++) {
       ch = htmlLine[c];
 
-      // XXX: what if '<' or '>' is between quotes?
-      if(currentItem.slice(-1) == ">") {
+      if(isComment(currentItem)) {
+        if(endsAComment(currentItem)) {
+            items.push(currentItem);
+            currentItem = "";
+        }
+      } else
+          //XXX: what if <,> are between quotes?
+          if(currentItem.slice(-1) == ">") {
           /*
            * Now here we have a an item done,
            *  e.g: currentItem = '<html>'
