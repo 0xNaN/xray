@@ -124,7 +124,9 @@ function ChromeSource(rawHtml) {
   tbody = initTable(this.doc);
 
   lines = rawHtml.split("\n");
-  lastType = null;
+
+  //XXX: fix the global scope
+  globalLastType = null;
 
   for(i = 0; i < lines.length; i++) {
     line = lines[i];
@@ -144,33 +146,8 @@ function ChromeSource(rawHtml) {
         td.className = "line-content";
 
         items.forEach(function(item) {
-            /*
-            * To understand what's the type of the item
-            * we could use this strategy:
-            *  - a comment will always starts with <!--
-            *  - a doctype will always starts with <!
-            *  - a stardad tag will always starts with <[a-Z]+
-            *  - all the others format is plain text
-            */
-
-            if(isStandardTag(item) || lastType == "STANDARD_TAG") {
-                lastType = "STANDARD_TAG";
-
-                span = createSpan("html-tag", item);
-                td.appendChild(span);
-
-                if(endsAStandardTag(item))
-                    lastType = null;
-
-            } else if(isComment(item) || lastType == "COMMENT" ) {
-                lastType = "COMMENT";
-
-                span = createSpan("html-comment", item);
-                td.appendChild(span);
-
-                if(endsAComment(item))
-                    lastType = null;
-            }
+           span = applyChromeSourceDecoration(globalLastType, item);
+           td.appendChild(span);
         });
 
         tr.appendChild(td);
@@ -179,6 +156,30 @@ function ChromeSource(rawHtml) {
   }
 
   return this.doc.documentElement.outerHTML;
+
+  /*
+   * returns a span that display the specified item following
+   * the Chrome 'view-source' convention
+   */
+  function applyChromeSourceDecoration(lastType, item) {
+      var span;
+      if(isStandardTag(item) || lastType == "STANDARD_TAG") {
+          span = createSpan("html-tag", item);
+
+          if(endsAStandardTag(item))
+              globalLastType = null;
+          else
+              globalLastType = "STANDARD_TAG";
+      } else if(isComment(item) || lastType == "COMMENT" ) {
+          span = createSpan("html-comment", item);
+
+          if(endsAComment(item))
+              globalLastType = null;
+            else
+              globalLastType = "COMMENT"
+      }
+      return span;
+  }
 
   function isStandardTag(item) {
     var RE_STANDARD_TAG_BEGIN = /^<[a-zA-Z]+/;
