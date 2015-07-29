@@ -134,7 +134,7 @@ function ChromeSource(rawHtml) {
     tr = this.doc.createElement("tr");
     appendLineNumber(tr, i+1);
 
-    items = extractItems(line);
+    items = extractItems(globalLastType, line);
 
     /*
      * Here items is a list containing all
@@ -206,14 +206,14 @@ function ChromeSource(rawHtml) {
    * in the given string of HTML
    * TODO: simplify maybe with some split
    */
-  function extractItems(htmlLine) {
+  function extractItems(lastType, htmlLine) {
     var currentItem = "";
     var items = [];
 
     for(c = 0; c < htmlLine.length; c++) {
       ch = htmlLine[c];
 
-      if(beginLikeComment(currentItem)) {
+      if(beginLikeComment(currentItem) || lastType == "COMMENT") {
         if(endsLikeComment(currentItem)) {
             items.push(currentItem);
             currentItem = "";
