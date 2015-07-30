@@ -188,7 +188,7 @@ function ChromeSource(rawHtml) {
   }
 
   function beginLikeStandardTag(item) {
-    var RE_STANDARD_TAG_BEGIN = /^<[a-zA-Z]+/;
+    var RE_STANDARD_TAG_BEGIN = /^<\/{0,1}[a-zA-Z]+/;
     return RE_STANDARD_TAG_BEGIN.test(item);
   }
 

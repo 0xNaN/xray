@@ -82,3 +82,19 @@ QUnit.test( "ChromeSource process a comment containing a tag on mutilple lines",
                           "<span class=\"html-comment\">&lt;head&gt; --&gt;</span></td></tr>"+
                        "</tbody></table></body></html>");
 });
+
+QUnit.test( "ChromeSource process an empty line", function( assert ) {
+  line = "<head>\n"+
+         "\n"+
+         "</head>";
+  source = ChromeSource(line);
+  assert.equal( source, "<html><head></head><body>" +
+                       "<div class=\"line-gutter-backdrop\"></div><table><tbody>" +
+                       "<tr><td class=\"line-number\" value=\"1\"></td><td class=\"line-content\">"+
+                          "<span class=\"html-tag\">&lt;head&gt;</span></td></tr>"+
+                       "<tr><td class=\"line-number\" value=\"2\"></td></tr>"+
+                       "<tr><td class=\"line-number\" value=\"3\"></td><td class=\"line-content\">"+
+                          "<span class=\"html-tag\">&lt;/head&gt;</span></td></tr>"+
+                       "</tbody></table></body></html>");
+});
+
