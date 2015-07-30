@@ -122,7 +122,7 @@ function ChromeSource(rawHtml) {
   var doc = document.implementation.createHTMLDocument();
   globalLastType = null; //XXX: fix the global scope
 
-  var sourceViewTBody = appendChromeSourceViewTable(doc);
+  var sourceViewTBody = appendChromeSourceDecorationTable(doc);
   htmlLines = rawHtml.split("\n");
   for(i = 0; i < htmlLines.length; i++) {
     line = htmlLines[i];
@@ -256,18 +256,20 @@ function ChromeSource(rawHtml) {
       return td;
   }
 
-  function appendChromeSourceViewTable(doc) {
-    /* header */
-    bd = doc.getElementsByTagName("body")[0];
+  /* returns a tbody element of the table added to `doc'.
+   * the table follows the Chrome view-source convetions
+   */
+  function appendChromeSourceDecorationTable(doc) {
+    var body = doc.getElementsByTagName("body")[0];
 
-    line_gutter_backdrop = doc.createElement("div");
+    var line_gutter_backdrop = doc.createElement("div");
     line_gutter_backdrop.className = "line-gutter-backdrop";
-    bd.appendChild(line_gutter_backdrop);
+    body.appendChild(line_gutter_backdrop);
 
-    bd.appendChild(doc.createElement("table"));
-    tbody = doc.createElement("tbody");
-    // this is "table"
-    bd.lastChild.appendChild(tbody);
+    var table = doc.createElement("table");
+    var tbody = doc.createElement("tbody");
+    table.appendChild(tbody);
+    body.appendChild(table);
 
     return tbody;
   }
