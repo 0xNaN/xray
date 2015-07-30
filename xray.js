@@ -115,39 +115,47 @@ function Glass(glassId) {
 // aggiustare lo scope di doc nelle funzioni
 function ChromeSource(rawHtml) {
 
-  /*
-   * Using an HTML document to take advantage of its functions
-   * and then take its source
-   */
-  var doc = document.implementation.createHTMLDocument();
   globalLastType = null; //XXX: fix the global scope
 
-  var sourceViewTBody = appendChromeSourceDecorationTable(doc);
+  var sourceViewDocument = document.implementation.createHTMLDocument();
+  var sourceViewTBody = appendChromeSourceDecorationTable(sourceViewDocument);
+
   htmlLines = rawHtml.split("\n");
   for(i = 0; i < htmlLines.length; i++) {
     line = htmlLines[i];
 
-    sourceViewTr = doc.createElement("tr");
-    sourceViewTr.appendChild(applyChromeSourceDecorationNumber(i+1))
+    sourceViewTr = sourceViewDocument.createElement("tr");
 
-    items = extractItems(globalLastType, line);
+    sourceViewTdLineNumber = applyChromeSourceDecorationNumber(i+1);
+    sourceViewTr.appendChild(sourceViewTdLineNumber);
 
-    if(items.length > 0) {
-        td = applyChromeSourceDecorationItems(globalLastType, items);
-        sourceViewTr.appendChild(td);
-    }
+
+    sourceViewTdContent = appendChromeSourceDecorationContent(globalLastType, sourceViewTr, line);
 
     sourceViewTBody.appendChild(sourceViewTr);
   }
 
-  return doc.documentElement.outerHTML;
+  return sourceViewDocument.documentElement.outerHTML;
+
+  /*
+   * apply the Chrome view-source style to a line of HTML and append the result to the
+   * specified tr
+   */
+  function appendChromeSourceDecorationContent(globalLastType, sourceViewTr, htmlLine) {
+      items = extractItems(globalLastType, htmlLine);
+
+      if(items.length > 0) {
+          sourceViewContent = applyChromeSourceDecorationItems(globalLastType, items);
+          sourceViewTr.appendChild(sourceViewContent);
+      }
+  }
 
   /*
    * returns a new td that display the specified items following
    * the Chrome 'view-source' conventions
    */
   function applyChromeSourceDecorationItems(lastType, items) {
-      var td = doc.createElement("td");
+      var td = document.createElement("td");
       td.className = "line-content";
 
       items.forEach(function(item) {
