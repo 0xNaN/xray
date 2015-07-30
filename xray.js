@@ -127,7 +127,7 @@ function ChromeSource(rawHtml) {
     sourceViewTr = sourceViewDocument.createElement("tr");
 
     appendChromeSourceDecorationNumber(sourceViewTr, i+1);
-    appendChromeSourceDecorationContent(globalLastType, sourceViewTr, htmlLine);
+    appendChromeSourceDecorationContent(sourceViewTr, htmlLine);
 
     sourceViewTBody.appendChild(sourceViewTr);
   }
@@ -138,11 +138,11 @@ function ChromeSource(rawHtml) {
    * apply the Chrome view-source style to a line of HTML and append the result to the
    * specified tr
    */
-  function appendChromeSourceDecorationContent(globalLastType, sourceViewTr, htmlLine) {
-      items = extractItems(globalLastType, htmlLine);
+  function appendChromeSourceDecorationContent(sourceViewTr, htmlLine) {
+      items = extractItems(htmlLine);
 
       if(items.length > 0) {
-          sourceViewContent = applyChromeSourceDecorationItems(globalLastType, items);
+          sourceViewContent = applyChromeSourceDecorationItems(items);
           sourceViewTr.appendChild(sourceViewContent);
       }
   }
@@ -151,12 +151,12 @@ function ChromeSource(rawHtml) {
    * returns a new td that display the specified items following
    * the Chrome 'view-source' conventions
    */
-  function applyChromeSourceDecorationItems(lastType, items) {
+  function applyChromeSourceDecorationItems(items) {
       var td = document.createElement("td");
       td.className = "line-content";
 
       items.forEach(function(item) {
-          span = applyChromeSourceDecoration(lastType, item);
+          span = applyChromeSourceDecoration(item);
           td.appendChild(span);
       });
 
@@ -167,16 +167,16 @@ function ChromeSource(rawHtml) {
    * returns a span that display the specified item following
    * the Chrome 'view-source' conventions
    */
-  function applyChromeSourceDecoration(lastType, item) {
+  function applyChromeSourceDecoration(item) {
       var span;
-      if((lastType == null && beginLikeStandardTag(item)) || lastType == "STANDARD_TAG") {
+      if((globalLastType == null && beginLikeStandardTag(item.trim())) || globalLastType == "STANDARD_TAG") {
           span = createSpan("html-tag", item);
 
           if(endsLikeStandardTag(item))
               globalLastType = null;
           else
               globalLastType = "STANDARD_TAG";
-      } else if((lastType == null && beginLikeComment(item)) || lastType == "COMMENT" ) {
+      } else if((globalLastType == null && beginLikeComment(item.trim())) || globalLastType == "COMMENT" ) {
           span = createSpan("html-comment", item);
 
           if(endsLikeComment(item))
@@ -212,14 +212,14 @@ function ChromeSource(rawHtml) {
    * in the given string of HTML
    * TODO: simplify maybe with some split
    */
-  function extractItems(lastType, htmlLine) {
+  function extractItems(htmlLine) {
     var currentItem = "";
     var items = [];
 
     for(c = 0; c < htmlLine.length; c++) {
       ch = htmlLine[c];
 
-      if(beginLikeComment(currentItem) || lastType == "COMMENT") {
+      if(beginLikeComment(currentItem) || globalLastType == "COMMENT") {
         if(endsLikeComment(currentItem)) {
             items.push(currentItem);
             currentItem = "";
