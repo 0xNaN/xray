@@ -126,8 +126,8 @@ function ChromeSource(rawHtml) {
 
     sourceViewTr = sourceViewDocument.createElement("tr");
 
-    sourceViewTdLineNumber = appendChromeSourceDecorationNumber(sourceViewTr, i+1);
-    sourceViewTdContent = appendChromeSourceDecorationContent(globalLastType, sourceViewTr, htmlLine);
+    appendChromeSourceDecorationNumber(sourceViewTr, i+1);
+    appendChromeSourceDecorationContent(globalLastType, sourceViewTr, htmlLine);
 
     sourceViewTBody.appendChild(sourceViewTr);
   }
