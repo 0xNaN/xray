@@ -168,23 +168,28 @@ function ChromeSource(rawHtml) {
    * the Chrome 'view-source' conventions
    */
   function applyChromeSourceDecoration(item) {
-      var span;
-      if((globalLastType == null && beginLikeStandardTag(item.trim())) || globalLastType == "STANDARD_TAG") {
-          span = createSpan("html-tag", item);
+      var node;
+      if((globalLastType == null && beginLikeStandardTag(item)) || globalLastType == "STANDARD_TAG") {
+          node = createSpan("html-tag", item);
 
           if(endsLikeStandardTag(item))
               globalLastType = null;
           else
               globalLastType = "STANDARD_TAG";
-      } else if((globalLastType == null && beginLikeComment(item.trim())) || globalLastType == "COMMENT" ) {
-          span = createSpan("html-comment", item);
+      } else if((globalLastType == null && beginLikeComment(item)) || globalLastType == "COMMENT" ) {
+          node = createSpan("html-comment", item);
 
           if(endsLikeComment(item))
               globalLastType = null;
             else
               globalLastType = "COMMENT"
+      } else {
+          /* if the item isn't a STANDARD_TAG or a COMMENT, is considered
+           * as plain text
+           */
+          node = document.createTextNode(item); //XXX: mmmhh...encode?
       }
-      return span;
+      return node;
   }
 
   function beginLikeStandardTag(item) {
