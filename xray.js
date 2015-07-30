@@ -136,30 +136,35 @@ function ChromeSource(rawHtml) {
 
     items = extractItems(globalLastType, line);
 
-    /*
-     * Here items is a list containing all
-     * the items on the line, so we need to understand the type
-     * e.g COMMENT, DOCTYPE, TEXT and add its content
-     */
     if(items.length > 0) {
-        td = doc.createElement("td");
-        td.className = "line-content";
-
-        items.forEach(function(item) {
-           span = applyChromeSourceDecoration(globalLastType, item);
-           td.appendChild(span);
-        });
-
+        td = applyChromeSourceDecorationItems(globalLastType, items);
         tr.appendChild(td);
     }
+
     tbody.appendChild(tr);
   }
 
   return doc.documentElement.outerHTML;
 
   /*
+   * returns a new td that display the specified items following
+   * the Chrome 'view-source' conventions
+   */
+  function applyChromeSourceDecorationItems(lastType, items) {
+      var td = doc.createElement("td");
+      td.className = "line-content";
+
+      items.forEach(function(item) {
+          span = applyChromeSourceDecoration(lastType, item);
+          td.appendChild(span);
+      });
+
+      return td;
+  }
+
+  /*
    * returns a span that display the specified item following
-   * the Chrome 'view-source' convention
+   * the Chrome 'view-source' conventions
    */
   function applyChromeSourceDecoration(lastType, item) {
       var span;
