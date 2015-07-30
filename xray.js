@@ -122,15 +122,12 @@ function ChromeSource(rawHtml) {
 
   htmlLines = rawHtml.split("\n");
   for(i = 0; i < htmlLines.length; i++) {
-    line = htmlLines[i];
+    htmlLine = htmlLines[i];
 
     sourceViewTr = sourceViewDocument.createElement("tr");
 
-    sourceViewTdLineNumber = applyChromeSourceDecorationNumber(i+1);
-    sourceViewTr.appendChild(sourceViewTdLineNumber);
-
-
-    sourceViewTdContent = appendChromeSourceDecorationContent(globalLastType, sourceViewTr, line);
+    sourceViewTdLineNumber = appendChromeSourceDecorationNumber(sourceViewTr, i+1);
+    sourceViewTdContent = appendChromeSourceDecorationContent(globalLastType, sourceViewTr, htmlLine);
 
     sourceViewTBody.appendChild(sourceViewTr);
   }
@@ -257,11 +254,12 @@ function ChromeSource(rawHtml) {
     return span;
   }
 
-  function applyChromeSourceDecorationNumber(number) {
-      td = document.createElement("td");
+  function appendChromeSourceDecorationNumber(sourceViewTr, number) {
+      var td = document.createElement("td");
       td.className = "line-number";
       td.setAttribute("value", number.toString());
-      return td;
+
+      sourceViewTr.appendChild(td);
   }
 
   /* returns a tbody element of the table added to `doc'.
