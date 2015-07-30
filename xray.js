@@ -120,28 +120,24 @@ function ChromeSource(rawHtml) {
    * and then take its source
    */
   var doc = document.implementation.createHTMLDocument();
+  globalLastType = null; //XXX: fix the global scope
 
-  tbody = appendChromeSourceViewTable(doc);
+  var sourceViewTBody = appendChromeSourceViewTable(doc);
+  htmlLines = rawHtml.split("\n");
+  for(i = 0; i < htmlLines.length; i++) {
+    line = htmlLines[i];
 
-  lines = rawHtml.split("\n");
-
-  //XXX: fix the global scope
-  globalLastType = null;
-
-  for(i = 0; i < lines.length; i++) {
-    line = lines[i];
-
-    tr = doc.createElement("tr");
-    appendLineNumber(tr, i+1);
+    sourceViewTr = doc.createElement("tr");
+    sourceViewTr.appendChild(applyChromeSourceDecorationNumber(i+1))
 
     items = extractItems(globalLastType, line);
 
     if(items.length > 0) {
         td = applyChromeSourceDecorationItems(globalLastType, items);
-        tr.appendChild(td);
+        sourceViewTr.appendChild(td);
     }
 
-    tbody.appendChild(tr);
+    sourceViewTBody.appendChild(sourceViewTr);
   }
 
   return doc.documentElement.outerHTML;
@@ -253,11 +249,11 @@ function ChromeSource(rawHtml) {
     return span;
   }
 
-  function appendLineNumber(tbody, number) {
-    tr.appendChild((td = document.createElement("td")),
-                          td.className = "line-number",
-                          td.setAttribute("value", number.toString()),
-                          td);
+  function applyChromeSourceDecorationNumber(number) {
+      td = document.createElement("td");
+      td.className = "line-number";
+      td.setAttribute("value", number.toString());
+      return td;
   }
 
   function appendChromeSourceViewTable(doc) {
