@@ -203,7 +203,7 @@ function ChromeSource(rawHtml) {
   }
 
   function endsLikeComment(item) {
-    var RE_COMMENT_END = /--!>$/;
+    var RE_COMMENT_END = /-->$/;
     return RE_COMMENT_END.test(item);
   }
 
