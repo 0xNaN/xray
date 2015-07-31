@@ -231,7 +231,7 @@ function ChromeSource(rawHtml) {
         }
       } else
           //XXX: what if <,> are between quotes?
-          if(currentItem.slice(-1) == ">") {
+          if(currentItem.slice(-1) == ">" || ch == "<") {
           /*
            * Now here we have a an item done,
            *  e.g: currentItem = '<html>'
