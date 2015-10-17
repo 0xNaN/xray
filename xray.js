@@ -1,8 +1,8 @@
 function doXray(sourceId, glassId) {
     sourceView = new SourceView(sourceId);
 
-    // sourceView.setContent(ChromeSource(document.documentElement.outerHTML));
-    sourceView.setContent(ChromeSource("<html>\n   <!-- a comment\non multiple line --><head><title> TITOLO  </title> <body>\n   <a href='ciao'> un link </a>"));
+    sourceView.setContent(ChromeSource(document.documentElement.outerHTML));
+  //  sourceView.setContent(ChromeSource("<html>\n   <!-- a comment\non multiple line --><head><title> TITOLO  </title> <body>\n   <a href='ciao'> un link </a>"));
 
     glass = new Glass(glassId);
     glass.setSourceView(sourceView);
@@ -168,15 +168,67 @@ function ChromeSource(rawHtml) {
    * the Chrome 'view-source' conventions
    */
   function applyChromeSourceDecoration(item) {
+      console.log("item", item);
+      console.log("lastType", globalLastType);
+
       var node;
       if((globalLastType == null && beginLikeStandardTag(item)) || globalLastType == "STANDARD_TAG") {
-          node = createSpan("html-tag", item);
+          console.log("-> HTML-TAG");
 
-          if(endsLikeStandardTag(item))
+          RE_ARG = /[a-zA-Z]*[\s]*=[\s]*["']{0,1}[a-zA-Z0-9]*["']{0,1}/; //XXX doesn't allow special chars inside quotes
+          argIndex = item.search(RE_ARG);
+          if(argIndex == -1) {
+              //siple arg: <head>, </head>
+              node = createSpan("html-tag", item);
+          } else {
+                tagItem = item.slice(0, argIndex);
+                node = createSpan("html-tag", tagItem);
+                console.log("TAG-NAME", tagItem);
+
+                item = item.slice(argIndex);
+              while((argIndex = item.search(RE_ARG)) > -1) {
+                              //parse args
+                xxx = document.createTextNode(item.slice(0, argIndex));
+                node.appendChild(xxx);
+                console.log("BEFORE", item.slice(0, argIndex));
+                item = item.slice(argIndex);
+
+                leftArgIndex = item.search(/[\s=]/);
+                leftArg = item.slice(0, leftArgIndex);
+                node.appendChild(createSpan("html-attribute-name", leftArg));
+                console.log("LEFT-ARG", leftArg);
+
+                item = item.slice(leftArgIndex);
+
+                assignIndex = item.search(/[^=\s"']/);
+                assign = item.slice(0, assignIndex);
+                node.appendChild(document.createTextNode(assign));
+                console.log("ASSIGN", assign);
+
+                item = item.slice(assignIndex);
+                valueIndex = item.search(/["'\s/>]/); // XXX:doesn't allow space inside values
+                value = item.slice(0, valueIndex);  // XXX:doesnt' allow links
+                console.log("VALUE", value);
+
+                //XXX:we can simply use createSpan since Escape
+                valueSpan = document.createElement("span");
+                valueSpan.className = "html-attribute-value";
+                valueSpan.innerHTML = value;
+                node.appendChild(valueSpan);
+
+                item = item.slice(valueIndex);
+              }
+
+              console.log("ITEM-END", item);
+              node.appendChild(document.createTextNode(item));
+          }
+
+         if(endsLikeStandardTag(item))
               globalLastType = null;
           else
               globalLastType = "STANDARD_TAG";
       } else if((globalLastType == null && beginLikeComment(item)) || globalLastType == "COMMENT" ) {
+          console.log("-> COMMENT");
           node = createSpan("html-comment", item);
 
           if(endsLikeComment(item))
@@ -184,7 +236,8 @@ function ChromeSource(rawHtml) {
             else
               globalLastType = "COMMENT"
       } else {
-          /* if the item isn't a STANDARD_TAG or a COMMENT, is considered
+          console.log("-> PLAIN-TEXT");
+          /* if the item isn't a STANDARD_TAG or a COMMENT, is considered*
            * as plain text
            */
           node = document.createTextNode(item); //XXX: mmmhh...encode?
@@ -291,7 +344,7 @@ function ChromeSource(rawHtml) {
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#39;')
             .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;');
+            .replace(/>/g, '&gt;')
     }
 }
 

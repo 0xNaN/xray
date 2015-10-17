@@ -98,3 +98,49 @@ QUnit.test( "ChromeSource process an empty line", function( assert ) {
                        "</tbody></table></body></html>");
 });
 
+QUnit.test( "ChromeSource process a line of plain text", function( assert ) {
+  line = "plain";
+
+  source = ChromeSource(line);
+  assert.equal( source, "<html><head></head><body>" +
+                       "<div class=\"line-gutter-backdrop\"></div><table><tbody>" +
+                       "<tr><td class=\"line-number\" value=\"1\"></td><td class=\"line-content\">plain</td></tr>"+
+                       "</tbody></table></body></html>");
+});
+
+QUnit.test( "ChromeSource process a complex line", function( assert ) {
+  line = "\t<head>   \t simple text </head>  <!--comment-->";
+
+  source = ChromeSource(line);
+  assert.equal( source, "<html><head></head><body>" +
+                       "<div class=\"line-gutter-backdrop\"></div><table><tbody>" +
+                       "<tr><td class=\"line-number\" value=\"1\"></td><td class=\"line-content\">\t<span class=\"html-tag\">&lt;head&gt;</span>"+
+                       "   \t simple text <span class=\"html-tag\">&lt;/head&gt;</span>  <span class=\"html-comment\">&lt;!--comment--&gt;</span></td></tr>"+
+                       "</tbody></table></body></html>");
+});
+
+QUnit.test( "ChromeSource process a tag with an attribute", function( assert ) {
+  line = "<a arg=\"value\"/>";
+
+  source = ChromeSource(line);
+  assert.equal( source, "<html><head></head><body>" +
+                       "<div class=\"line-gutter-backdrop\"></div><table><tbody>" +
+                       "<tr><td class=\"line-number\" value=\"1\"></td>"+
+                       "<td class=\"line-content\"><span class=\"html-tag\">&lt;a <span class=\"html-attribute-name\">arg</span>"+
+                       "=\"<span class=\"html-attribute-value\">value</span>\"/&gt;</span></td></tr>" +
+                       "</tbody></table></body></html>");
+});
+
+
+QUnit.test( "ChromeSource process a tag with two attribute", function( assert ) {
+  line = "<a arg=\"value\" arg=\"value2\"/>";
+
+  source = ChromeSource(line);
+  assert.equal( source, "<html><head></head><body>" +
+                       "<div class=\"line-gutter-backdrop\"></div><table><tbody>" +
+                       "<tr><td class=\"line-number\" value=\"1\"></td>"+
+                       "<td class=\"line-content\"><span class=\"html-tag\">&lt;a "+
+                        "<span class=\"html-attribute-name\">arg</span>=\"<span class=\"html-attribute-value\">value</span>\" "+
+                        "<span class=\"html-attribute-name\">arg</span>=\"<span class=\"html-attribute-value\">value2</span>\"/&gt;</span></td></tr>"+
+                       "</tbody></table></body></html>");
+});
