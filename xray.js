@@ -1,10 +1,17 @@
-function doXray(sourceId, glassId) {
-    sourceView = new SourceView(sourceId);
+function doXray() {
+    var sourceElement = document.createElement('div')
+    sourceElement.setAttribute('id','source')
+    var glassElement = document.createElement('div')
+    glassElement.setAttribute('id','glass')
+    document.body.appendChild(glassElement)
+    document.body.appendChild(sourceElement)
+
+    var sourceView = new SourceView(sourceElement);
 
     sourceView.setContent(ChromeSource(document.documentElement.outerHTML));
   //  sourceView.setContent(ChromeSource("<html>\n   <!-- a comment\non multiple line --><head><title> TITOLO  </title> <body>\n   <a href='ciao'> un link </a>"));
 
-    glass = new Glass(glassId);
+    var glass = new Glass(glassElement);
     glass.setSourceView(sourceView);
 }
 
@@ -47,10 +54,10 @@ function getIntersectionRect(r1, r2) {
 }
 
 
-function SourceView(sourceId) {
+function SourceView(element) {
   var that = this;
 
-  this.element = document.getElementById(sourceId);
+  this.element = element;
   this.boundingRect = this.element.getBoundingClientRect();
 
   this.update = function(glassRect) {
@@ -76,11 +83,11 @@ function SourceView(sourceId) {
 }
 
 
-function Glass(glassId) {
+function Glass(element) {
   var that = this;
 
   this.sourceView = null;
-  this.element = document.getElementById(glassId);
+  this.element = element;
 
   this.element.onmouseup = function(e) {
     e.target.onmousemove = null;
