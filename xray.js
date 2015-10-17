@@ -1,4 +1,4 @@
-function doXray() {
+;(function init() {
     var sourceElement = document.createElement('div')
     sourceElement.setAttribute('id','source')
     var glassElement = document.createElement('div')
@@ -13,7 +13,7 @@ function doXray() {
 
     var glass = new Glass(glassElement);
     glass.setSourceView(sourceView);
-}
+})();
 
 function areOverlapped(r1, r2) {
     return r1.right  >= r2.left &&
