@@ -2,10 +2,26 @@ body {
   background: #dedede;
 }
 
-#view-source {
+#view-source-help {
   position: absolute;
   top: 0;
   left: 0;
+  border: none;
+  width: 200px;
+  height: 200px;
+  line-height: 200px;
+  z-index: 2;
+  background: #fff;
+  text-align: center;
+  font-family: Consolas,monospace;
+  opacity: 1;
+  transition: opacity 1s ease;
+}
+
+#view-source-code {
+  position: absolute;
+  top: 10px;
+  right: 10px;
   border: none;
 }
 
@@ -14,8 +30,8 @@ body {
   overflow: hidden;
   width: 200px;
   height: 200px;
-  top: 0;
-  left: 0;
+  top: 10px;
+  right: 10px;
   border: 2px solid #333;
   background: #fff;
   border-radius: 50%;
@@ -32,4 +48,8 @@ body {
   cursor: -webkit-grab;
   cursor: -moz-grab;
   cursor: grabbing;
+}
+
+#view-source-handle:hover #view-source-help {
+  opacity: 0;
 }

@@ -1,13 +1,18 @@
 ;(function (){
   // we want as little noise in our innerHtml ass possibile
   var source = document.createElement('pre')
-  source.id = 'view-source'
+  source.id = 'view-source-code'
   source.className = 'prettyprint'
   source.innerHTML = ('<!doctype html>\n<html>\n' + document.documentElement.innerHTML + '\n</html>').replace(/[<>]/g, function (m) { return {'<':'&lt;','>':'&gt;'}[m]})
+  // it's cool if the user knows how to use the tool, right
+  var help = document.createElement('div')
+  help.id = 'view-source-help'
+  help.innerHTML = '&lt;drag me around&gt;'
   // then we create the hand which wraps the whole content
   var handle = document.createElement('div')
   handle.id = 'view-source-handle'
   handle.appendChild(source)
+  handle.appendChild(help)
   // last but not least we load and add the prettifier to the dom
   var prettyprint = document.createElement('script')
   prettyprint.src = 'google-code-prettify/run_prettify.js?autoload=true&amp;lang=html';
