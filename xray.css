@@ -1,34 +1,35 @@
-/* body { */
-/*   background-color: black; */
-/*   color: green; */
-/*   margin: 0px 0px; */
-/* } */
-
-#source {
-  background:white;
-  position: absolute;
-  top: 0px;
-  left: 0px;
-
-  overflow: hidden;
-  white-space: nowrap;
-
-  /* disable selection */
-  -moz-user-select: none;
-  -khtml-user-select: none;
-  -webkit-user-select: none;
-  -o-user-select: none;
+body {
+  background: #dedede;
 }
 
-#glass {
-  background-color: rgba(0, 0, 0, 0);
-
-  z-index: 99;
+#view-source {
   position: absolute;
-  top: 60px;
-  left: 550px;
+  top: 0;
+  left: 0;
+  border: none;
+}
 
-  border: 1px solid green;
-  width: 150px;
-  height: 150px;
+#view-source-handle {
+  position: absolute;
+  overflow: hidden;
+  width: 200px;
+  height: 200px;
+  top: 0;
+  left: 0;
+  border: 2px solid #333;
+  background: #fff;
+  border-radius: 50%;
+  z-index: 1;
+  cursor: -webkit-grab;
+  cursor: -moz-grab;
+  cursor: grab;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
+#view-source-handle.drag {
+  cursor: -webkit-grab;
+  cursor: -moz-grab;
+  cursor: grabbing;
 }
