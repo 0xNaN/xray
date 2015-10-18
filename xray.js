@@ -28,9 +28,12 @@
       , w = handle.offsetWidth / 2
       , t = (event.pageY - h)
       , l = (event.pageX - w)
-    handle.style.top = t + 'px'
-    handle.style.left = l + 'px'
-    source.style.top = (t < 0 ? Math.abs(t) : '-' + t) + 'px'
-    source.style.left = (l < 0 ? Math.abs(l) : '-' + l) + 'px'
+    handle.style.top = px(t)
+    handle.style.left = px(l)
+    source.style.top = px(t < 0 ? Math.abs(t) : '-' + t)
+    source.style.left = px(l < 0 ? Math.abs(l) : '-' + l)
+  }
+  function px(unit){
+    return unit + 'px'
   }
 })()
