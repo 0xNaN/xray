@@ -1,5 +1,6 @@
-# xray
-try it opening `xray.html` with chrome/chromium
+# XRay
+
+try it opening `xray.html`
 
 references:
 https://github.com/google/code-prettify
